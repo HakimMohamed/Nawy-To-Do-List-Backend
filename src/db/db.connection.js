@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
 
 module.exports = async (uri) => {
     mongoose.set('strictQuery', true);

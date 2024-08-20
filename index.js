@@ -4,7 +4,7 @@ const { default: mongoose } = require('mongoose');
 
 const StartServer = () => {
     app.listen(config.server.port, () =>
-        console.info(`Server is running on port ${config.server.port}, NODE_ENV: ${config.env}`)
+        console.info(`Server is running on port ${config.server.port}\nNODE_ENV: ${config.env}`)
     );
 };
 

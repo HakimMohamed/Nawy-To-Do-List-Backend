@@ -6,6 +6,7 @@ class UserService {
     async getUserByEmail(email) {
         return User.findOne({ email }).lean();
     }
+
     async register(email, password, name) {
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -17,12 +18,13 @@ class UserService {
 
         const savedUser = await newUser.save();
 
-        const token = jwt.sign({ email, userId: savedUser._id }, process.env.SECRET_KEY, {
-            expiresIn: '365d',
-            algorithm: 'HS256'
-        });
+        const token = this.generateUserToken(savedUser.email, savedUser._id.toString());
 
         return Promise.resolve(token);
+    }
+
+    generateUserToken(email, userId) {
+        return jwt.sign({ email, userId }, process.env.SECRET_KEY, { expiresIn: '7d', algorithm: 'HS256' });
     }
 }
 

@@ -14,7 +14,8 @@ const constants = {
     },
     ALLOWED_ROUTES: {
         path: [
-            "/api/user/register"
+            "/api/user/register",
+            "/api/user/login"
         ]
     },
 };

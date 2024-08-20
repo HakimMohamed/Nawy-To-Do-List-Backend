@@ -2,13 +2,14 @@ const constants = require('../constants');
 const UserService = require('../services/User');
 const { asyncHandler } = require('../Utils/asyncHandler');
 const validator = require('validator');
+const bcrypt = require('bcrypt')
 
 module.exports = {
     getUserById: asyncHandler(async (req, res) => {
         return res.status(200).json(req.user);
     }),
 
-    registerUser: asyncHandler(async (req, res) => {
+    register: asyncHandler(async (req, res) => {
         const { email, password, name } = req.body;
 
         if (!email || !validator.isEmail(email)) {
@@ -50,6 +51,38 @@ module.exports = {
         return res.status(constants.STATUS_CODES.CREATED).json({
             success: true,
             message: 'Sign up successful.',
+            data: token
+        })
+    }),
+
+    login: asyncHandler(async (req, res, next) => {
+        const { email, password } = req.body;
+
+        const userInfo = await UserService.getUserByEmail(email);
+
+        if (!userInfo) {
+            return res.status(constants.STATUS_CODES.NOT_FOUND).json({
+                success: false,
+                message: 'User Not Found.',
+                data: ''
+            })
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, userInfo.password);
+
+        if (!isPasswordValid) {
+            return res.status(constants.STATUS_CODES.FORBIDDEN).json({
+                success: false,
+                message: 'Invalid username or password.',
+                data: ''
+            })
+        }
+
+        const token = await UserService.generateUserToken(email, userInfo._id.toString());
+
+        return res.status(constants.STATUS_CODES.CREATED).json({
+            success: true,
+            message: 'Sign in successful.',
             data: token
         })
     }),
