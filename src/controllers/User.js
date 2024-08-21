@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt')
 
 module.exports = {
     getUserById: asyncHandler(async (req, res) => {
+        delete req.user._id;
+
         return res.status(200).json(req.user);
     }),
 

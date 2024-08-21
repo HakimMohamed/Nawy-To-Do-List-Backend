@@ -11,25 +11,12 @@ const TaskSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        order: {
-            type: Number,
-            required: true
-        },
-        checked: {
-            type: Boolean,
-            default: false
-        },
-        _category: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Categories',
-            required: true
-        },
     },
     {
         timestamps: true
     }
 );
 
-const Task = mongoose.model('Task', TaskSchema, "Tasks");
+const Task = mongoose.model('Category', TaskSchema, 'Categories');
 
 module.exports = Task;

@@ -36,7 +36,7 @@ module.exports = {
 
                     const { userId } = decoded;
 
-                    const user = (await User.findById(userId, { _id: 0, email: 1, name: 1 }).lean());
+                    const user = (await User.findById(userId, { _id: 1, email: 1, name: 1 }).lean());
 
                     req.user = user;
                     if (!user) {
