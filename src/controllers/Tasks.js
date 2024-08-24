@@ -16,10 +16,10 @@ module.exports = {
     }),
 
     createUserTask: asyncHandler(async (req, res) => {
-        const { title, _category, order } = req.body;
-        const userId = req.user;
+        const { title, _category } = req.body;
+        const user = req.user;
 
-        await TasksService.createUserTask(userId, title, _category, order)
+        await TasksService.createUserTask({ userId: user._id, title, _category })
 
         return res.status(constants.STATUS_CODES.CREATED).json({
             success: true,
@@ -49,9 +49,10 @@ module.exports = {
     }),
 
     updateUserTask: asyncHandler(async (req, res) => {
-        const { taskId, title, _category } = req.body;
+        const { taskId } = req.query;
+        const { title, _category, checked } = req.body;
 
-        const result = await TasksService.updateUserTask(taskId, title, _category)
+        const result = await TasksService.updateUserTask({ taskId, title, _category, checked })
 
         if (result && result.acknowledged === true && result.modifiedCount === 0) {
             return res.status(constants.STATUS_CODES.CONFLICT).json({

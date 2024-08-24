@@ -6,15 +6,30 @@ class TasksService {
     async getUserTasks(userId, category = "") {
         const match = { _user: userId };
 
-        if (category) {
-            match.category = category
+        switch (category) {
+            case "completed":
+                match.checked = true
+
+            case "today":
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const tomorrow = new Date(today);
+                tomorrow.setDate(today.getDate() + 1);
+                match.createdAt = {
+                    $gte: today,
+                    $lt: tomorrow
+                }
+            default:
         }
 
-        return Task.find().sort({ order: -1, createdAt: -1, checked: -1 }).lean();
+        return Task.find(match)
+            .sort({ checked: 1, createdAt: -1 })
+            .lean();
     }
 
-    async createUserTask(userId, title, _category, order) {
-        const newTask = new Task({ _user: userId, title, _category, order })
+    async createUserTask({ userId, title, _category }) {
+        const newTask = new Task({ _user: userId, title, _category, order: 200 })
 
         return newTask.save();
     }
@@ -23,17 +38,21 @@ class TasksService {
         return Task.deleteOne({ _id: new mongoose.Types.ObjectId(taskId) });
     }
 
-    async updateUserTask(taskId, title, _category, order) {
+    async updateUserTask({ taskId, ...updateFields }) {
+        const formattedUpdateFields = Object.fromEntries(
+            Object.entries(updateFields).filter(([key, value]) => value != null)
+        );
+
+        if (formattedUpdateFields.checked) {
+            formattedUpdateFields.order = 0
+        }
+
         return Task.updateOne(
             {
                 _id: new mongoose.Types.ObjectId(taskId)
             },
             {
-                $set: {
-                    title,
-                    _category: new mongoose.Types.ObjectId(_category),
-                    order,
-                }
+                $set: formattedUpdateFields
             }
         );
     }

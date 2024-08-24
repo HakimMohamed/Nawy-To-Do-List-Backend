@@ -29,7 +29,7 @@ module.exports = {
             try {
                 const token = authHeader?.split(' ')[1];
 
-                if (token) {
+                if (token && !constants.ALLOWED_ROUTES[req.path]) {
                     const decoded = jwt.verify(token, process.env.SECRET_KEY, {
                         algorithms: ['HS256']
                     });

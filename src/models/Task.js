@@ -13,7 +13,6 @@ const TaskSchema = new mongoose.Schema(
         },
         order: {
             type: Number,
-            required: true
         },
         checked: {
             type: Boolean,
@@ -22,7 +21,6 @@ const TaskSchema = new mongoose.Schema(
         _category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Categories',
-            required: true
         },
     },
     {
