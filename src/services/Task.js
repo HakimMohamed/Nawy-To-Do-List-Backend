@@ -3,12 +3,13 @@ const Task = require("../models/Task")
 
 
 class TasksService {
-    async getUserTasks(userId, category = "") {
+    async getUserTasks(userId, category = "", categoryId) {
         const match = { _user: userId };
 
         switch (category) {
             case "completed":
-                match.checked = true
+                match.checked = true;
+                break;
 
             case "today":
                 const today = new Date();
@@ -19,14 +20,24 @@ class TasksService {
                 match.createdAt = {
                     $gte: today,
                     $lt: tomorrow
-                }
+                };
+                break;
+
+            case "all":
+                break;
+
             default:
+                if (categoryId) {
+                    match._category = new mongoose.Types.ObjectId(categoryId);
+                }
+                break;
         }
 
         return Task.find(match)
             .sort({ checked: 1, createdAt: -1 })
             .lean();
     }
+
 
     async createUserTask({ userId, title, _category }) {
         const newTask = new Task({ _user: userId, title, _category, order: 200 })
