@@ -1,12 +1,12 @@
 const constants = require('../constants');
 const { asyncHandler } = require('../Utils/asyncHandler');
-const TasksService = require('../services/Tasks')
+const TasksService = require('../services/Task')
 
 module.exports = {
     getTasks: asyncHandler(async (req, res) => {
         const category = req.query.category;
 
-        const tasks = (await TasksService.getUserTasks(req.user._id, category)) || [];
+        const tasks = await TasksService.getUserTasks(req.user._id, category);
 
         return res.status(constants.STATUS_CODES.OK).json({
             success: true,

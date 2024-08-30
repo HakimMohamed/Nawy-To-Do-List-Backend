@@ -15,6 +15,29 @@ const UserSchema = new mongoose.Schema(
         name: {
             type: String,
             required: true
+        },
+        categories: {
+            type: [
+                {
+                    path: {
+                        type: String,
+                        required: true
+                    },
+                    category: {
+                        type: String,
+                        required: true
+                    },
+                    icon: {
+                        type: mongoose.Schema.Types.Mixed,
+                        required: true
+                    },
+                    text: {
+                        type: String,
+                        required: true
+                    },
+                }
+            ],
+            default: []
         }
     },
     {

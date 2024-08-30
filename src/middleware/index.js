@@ -36,9 +36,8 @@ module.exports = {
 
                     const { userId } = decoded;
 
-                    const user = (await User.findById(userId, { _id: 1, email: 1, name: 1 }).lean());
+                    const user = (await User.findById(userId, { _id: 1, email: 1, name: 1, categories: 1 }).lean());
 
-                    req.user = user;
                     if (!user) {
                         return res.status(constants.STATUS_CODES.NOT_FOUND).json({
                             success: false,
@@ -46,6 +45,9 @@ module.exports = {
                             data: ''
                         });
                     }
+
+                    req.user = user;
+
                 }
 
                 return next();

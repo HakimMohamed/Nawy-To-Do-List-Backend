@@ -18,6 +18,11 @@ const constants = {
             "/api/user/login"
         ]
     },
+    MAIN_CATEGORIES: {
+        'tasks': true,
+        'completed': true,
+        'today': true,
+    },
 };
 
 module.exports = constants;
