@@ -34,6 +34,19 @@ class CategoryService {
         return Promise.all(promises)
     }
 
+    async updateCategoryText({ categoryId, userId, path, category, text }) {
+        const match = { _id: userId, "categories._id": new mongoose.Types.ObjectId(categoryId) };
+
+        const update = {
+            $set: {
+                "categories.$.path": path,
+                "categories.$.category": category,
+                "categories.$.text": text,
+            }
+        }
+
+        return User.updateOne(match, update)
+    }
 }
 
 module.exports = new CategoryService()
