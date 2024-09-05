@@ -41,4 +41,24 @@ module.exports = {
             data: req.user.categories || []
         });
     }),
+
+    deleteCategoryById: asyncHandler(async (req, res) => {
+        const { categoryId } = req.query;
+
+        if (!categoryId) {
+            return res.status(constants.STATUS_CODES.BAD_REQUEST).json({
+                success: false,
+                message: "CategoryId required",
+                data: ""
+            });
+        }
+
+        await CategoryService.deleteCategoryById(req.query.categoryId, req.user._id)
+
+        return res.status(constants.STATUS_CODES.OK).json({
+            success: true,
+            message: "Categories Retrieved Successfully",
+            data: req.user.categories || []
+        });
+    }),
 }

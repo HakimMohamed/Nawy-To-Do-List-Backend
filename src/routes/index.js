@@ -20,6 +20,7 @@ router.patch('/task', tasksController.updateUserTask);
 // Category Routes
 router.get('/categories', categoryController.fetchCategories);
 router.post('/category', categoryController.addCategoryToUser);
+router.delete('/category', categoryController.deleteCategoryById);
 
 
 module.exports = router;
