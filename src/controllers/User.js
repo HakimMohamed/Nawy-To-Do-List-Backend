@@ -4,10 +4,9 @@ const { asyncHandler } = require('../Utils/asyncHandler');
 const validator = require('validator');
 const bcrypt = require('bcrypt')
 
+
 module.exports = {
     getUserById: asyncHandler(async (req, res) => {
-        delete req.user._id;
-
         return res.status(200).json(req.user);
     }),
 
@@ -48,9 +47,61 @@ module.exports = {
             })
         }
 
-        const token = await UserService.register(email, password, name);
+        const otp = UserService.generateOTP()
 
-        return res.status(constants.STATUS_CODES.CREATED).json({
+        try {
+            await UserService.sendOTP(email, otp)
+            return res.status(constants.STATUS_CODES.CREATED).json({
+                success: true,
+                message: 'Otp sent to your email.',
+                data: ""
+            })
+        } catch (err) {
+            if (err === "User Blocked For 10 minutes.") {
+                return res.status(constants.STATUS_CODES.TOO_EARLY).json({
+                    success: false,
+                    message: 'Your Block For 10 minutes due to too many failed otps.',
+                    data: ""
+                })
+            }
+            return res.status(constants.STATUS_CODES.BAD_REQUEST).json({
+                success: false,
+                message: 'Error Sending Verification Code.',
+                data: ''
+            })
+        }
+    }),
+
+    completeRegistration: asyncHandler(async (req, res, next) => {
+        const { email, otp, password, name } = req.body;
+
+        const otpDoc = await UserService.getUserOtp(email);
+
+        if (!otpDoc) {
+            return res.status(constants.STATUS_CODES.BAD_REQUEST).json({
+                success: false,
+                message: 'You have to request an otp first.',
+                data: ""
+            })
+        }
+
+        const isMatch = await bcrypt.compare(otp, otpDoc.otp);
+
+        if (!isMatch) {
+            return res.status(constants.STATUS_CODES.FORBIDDEN).json({
+                success: false,
+                message: 'Wrong Otp.',
+                data: ""
+            })
+        }
+
+        const user = await UserService.register(email, password, name)
+
+        await UserService.verifyUser(email)
+
+        const token = await UserService.generateUserToken(email, user._id.toString());
+
+        return res.status(constants.STATUS_CODES.OK).json({
             success: true,
             message: 'Sign up successful.',
             data: token

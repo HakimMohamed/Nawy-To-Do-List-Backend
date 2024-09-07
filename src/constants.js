@@ -10,12 +10,13 @@ const constants = {
         NOT_FOUND: 404,
         CONFLICT: 409,
         INTERNAL_SERVER_ERROR: 500,
-
+        TOO_EARLY: 425,
     },
     ALLOWED_ROUTES: {
         path: [
             "/api/user/register",
-            "/api/user/login"
+            "/api/user/login",
+            "/api/user/complete-register"
         ]
     },
     MAIN_CATEGORIES: {
