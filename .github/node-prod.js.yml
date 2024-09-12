@@ -1,0 +1,35 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: [self-hosted, runner]
+    strategy:
+      matrix:
+        node-version: [22.5.0]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Copy environment file
+        run: cp ../../../../.env .
+
+      - name: Copy certificates
+        run: cp -r ../../../../certificates .
+
+      - name: Restart PM2 server
+        run: pm2 stop server.js
+
+      - name: Restart PM2 server
+        run: pm2 start server.js
